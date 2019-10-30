@@ -13,6 +13,8 @@ dotenv.config({ path: `${process.cwd()}/config/config.env` });
 connectDB();
 
 const app = express();
+// body-parser
+app.use(express.json());
 
 // Dev logger middlevare
 if (process.env.NODE_ENV === 'development') {

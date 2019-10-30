@@ -39,14 +39,15 @@ const BootcampSchema = new mongoose.Schema({
     required: [true, 'Pleace add an adress']
   },
   location: {
+    required: false,
     type: {
       type: String,
       enum: ['Point'],
-      required: true
+      required: false
     },
     coordinates: {
       type: [Number],
-      required: true,
+      required: false,
       index: '2dsphere'
     },
     formattedAddress: String,
@@ -62,9 +63,9 @@ const BootcampSchema = new mongoose.Schema({
     enum: [
       'Web Development',
       'Mobile Development',
-      'UX/UI',
+      'UI/UX',
       'Data Science',
-      'Buisness',
+      'Business',
       'Other'
     ]
   },
@@ -73,7 +74,7 @@ const BootcampSchema = new mongoose.Schema({
     min: [1, 'Rating must be at least 1'],
     max: [10, 'Rating cannot be more than 10']
   },
-  averageRating: Number,
+  averageCost: Number,
   photo: {
     type: String,
     default: 'no-photo.jpg'
