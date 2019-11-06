@@ -3,12 +3,13 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const colors = require('colors');
 const connectDB = require(`../config/db`);
-
-// Route files
-const bootcamps = require(`../src/routes/bootcamps`);
+const errorHandler = require('./middleware/error');
 
 // load env vars
 dotenv.config({ path: `${process.cwd()}/config/config.env` });
+
+// Route files
+const bootcampRoutes = require(`../src/routes/bootcamps`);
 
 connectDB();
 
@@ -21,7 +22,11 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-app.use('/api/v1/bootcamps', bootcamps);
+// url mappings
+app.use('/api/v1/bootcamps', bootcampRoutes);
+
+// error handler
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
@@ -29,7 +34,7 @@ const server = app.listen(
   PORT,
   console.log(
     `Server running in ${process.env.NODE_ENV} mode in port:${PORT}`.white
-      .bgGreen
+      .bgBlue.underline
   )
 );
 
