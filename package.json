@@ -12,7 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "colors": "^1.4.0",
-    "nodemon": "^1.19.4"
+    "nodemon": "^1.19.4",
+    "prettier": "^1.19.1"
   },
   "dependencies": {
     "dotenv": "^8.2.0",

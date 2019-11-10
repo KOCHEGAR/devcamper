@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
@@ -8,10 +8,12 @@ const connectDB = async () => {
       useFindAndModify: false,
       useUnifiedTopology: true
     });
-    console.log(`MongoDB connected to: ${conn.connection.host}`.green.bold.underline);
+    console.log(
+      `MongoDB connected to: ${conn.connection.host}`.green.bold.underline
+    );
   } catch (error) {
-    console.error('ERROR!!');
-    console.error(`${error['reason'] || error}`.bgRed);
+    console.error("ERROR!!");
+    console.error(`${error["reason"] || error}`.bgRed);
   }
 };
 
