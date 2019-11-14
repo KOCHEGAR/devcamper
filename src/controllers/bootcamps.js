@@ -2,15 +2,21 @@ const Bootcamp = require("../models/Bootcamp");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/asyncHandler");
 const geocoder = require("../utils/geocoder");
+const queryFiltering = require("../utils/complexFiltering");
 
 // @desc        get all bootcamps
 // @route       GET /api/v1/bootcamps
 // @access      Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const bootcamps = await Bootcamp.find();
-  res
-    .status(200)
-    .json({ success: true, count: bootcamps.length, data: bootcamps });
+  const data = await queryFiltering(req.query, Bootcamp);
+  const bootcamps = await data["query"];
+
+  res.status(200).json({
+    success: true,
+    count: data["totalOfDocuments"],
+    pagination: data["pagination"],
+    data: bootcamps
+  });
 });
 
 // @desc        get single bootcamp
