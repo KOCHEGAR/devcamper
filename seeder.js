@@ -6,6 +6,7 @@ const colors = require("colors");
 dotenv.config({ path: "./config/config.env" });
 
 const Bootcamp = require("./src/models/Bootcamp");
+const Course = require("./src/models/Course");
 
 const connectDB = async () => {
   try {
@@ -28,11 +29,14 @@ connectDB();
 const bootcamps = JSON.parse(
   fs.readFileSync(`${__dirname}/_data/bootcamps.json`, "utf-8")
 );
-
+const courses = JSON.parse(
+  fs.readFileSync(`${__dirname}/_data/courses.json`, "utf-8")
+);
 // import to DB
 const importData = async () => {
   try {
     await Bootcamp.create(bootcamps);
+    await Course.create(courses);
     console.log("Data imported...".green.underline);
     process.exit();
   } catch (e) {
@@ -44,6 +48,7 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await Bootcamp.deleteMany();
+    await Course.deleteMany();
     console.log("Data destroyed...".green.underline);
     process.exit();
   } catch (e) {

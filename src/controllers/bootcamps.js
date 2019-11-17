@@ -9,7 +9,9 @@ const queryFiltering = require("../utils/complexFiltering");
 // @access      Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
   const data = await queryFiltering(req.query, Bootcamp);
-  const bootcamps = await data["query"];
+  const query = data["query"].populate("courses");
+
+  const bootcamps = await query;
 
   res.status(200).json({
     success: true,
@@ -44,6 +46,9 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // @route           PUT /api/v1/bootcamps/:id
 // @access          Private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
+  console.log("Params ", req.params);
+  console.log("Body ", req.body);
+  console.log("Files ", req.files);
   const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
@@ -62,12 +67,13 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 // @route           POST /api/v1/bootcamps/:id
 // @access          Private
 exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
-  const bootcamp = await Bootcamp.findByIdAndDelete(req.params.id);
+  const bootcamp = await Bootcamp.findById(req.params.id);
   if (!bootcamp) {
     return next(
       new ErrorResponse(`Bootcamp not found with id of ${req.params.id}`, 404)
     );
   }
+  await bootcamp.remove();
   res.status(200).json({ success: true, data: {} });
 });
 
