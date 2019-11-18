@@ -4,14 +4,17 @@ const {
   getCourse,
   createCourse,
   deleteCourse,
-  updateCourse
+  updateCourse,
+  getCoursesForBootcamp
 } = require("../controllers/courses");
+const filterResults = require("../middleware/advanceFiltering");
+const Course = require("../models/Course");
 
 const router = express.Router({ mergeParams: true });
 
 router
   .route("/")
-  .get(getCourses)
+  .get(getCoursesForBootcamp, filterResults(Course), getCourses)
   .post(createCourse);
 
 router

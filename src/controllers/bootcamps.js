@@ -1,24 +1,15 @@
+const path = require("path");
 const Bootcamp = require("../models/Bootcamp");
 const ErrorResponse = require("../utils/errorResponse");
 const asyncHandler = require("../middleware/asyncHandler");
 const geocoder = require("../utils/geocoder");
-const queryFiltering = require("../utils/complexFiltering");
+// const queryFiltering = require("../utils/complexFiltering");
 
 // @desc        get all bootcamps
 // @route       GET /api/v1/bootcamps
 // @access      Public
 exports.getBootcamps = asyncHandler(async (req, res, next) => {
-  const data = await queryFiltering(req.query, Bootcamp);
-  const query = data["query"].populate("courses");
-
-  const bootcamps = await query;
-
-  res.status(200).json({
-    success: true,
-    count: data["totalOfDocuments"],
-    pagination: data["pagination"],
-    data: bootcamps
-  });
+  res.status(200).json(res.filteredResults);
 });
 
 // @desc        get single bootcamp
@@ -46,9 +37,9 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 // @route           PUT /api/v1/bootcamps/:id
 // @access          Private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-  console.log("Params ", req.params);
-  console.log("Body ", req.body);
-  console.log("Files ", req.files);
+  // console.log("Params ", req.params);
+  // console.log("Body ", req.body);
+  // console.log("Files ", req.files);
   const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true
@@ -97,5 +88,51 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
     success: true,
     count: bootcamps.length,
     data: bootcamps
+  });
+});
+
+exports.bootcampUploadPhoto = asyncHandler(async (req, res, next) => {
+  const id = req.params.id;
+  const files = req.files;
+
+  const bootcamp = await Bootcamp.findById(id);
+
+  if (!bootcamp) {
+    return next(new ErrorResponse(`Bootcamp not found with id of ${id}`, 404));
+  }
+
+  console.log(files);
+
+  if (!(files && files.file && files.file.mimetype.startsWith("image/"))) {
+    return next(new ErrorResponse("Please, upload an image file", 400));
+  }
+  const file = files.file;
+
+  if (file.size > process.env.MAX_FILE_UPLOAD) {
+    return next(
+      new ErrorResponse(
+        `Please, upload an image less than ${process.env.MAX_FILE_UPLOAD} bytes`,
+        400
+      )
+    );
+  }
+
+  // Custom filename
+  file.name = `photo_${bootcamp._id}${path.parse(file.name).ext}`;
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+    if (err) {
+      console.log("Something went wrong while processing an image ", err);
+      return next(
+        new ErrorResponse("Something went wrong while processing an image", 500)
+      );
+    }
+
+    await Bootcamp.findByIdAndUpdate(id, { photo: file.name });
+
+    res.status(200).json({
+      success: true,
+      data: file.name
+    });
   });
 });

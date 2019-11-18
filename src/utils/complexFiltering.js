@@ -1,6 +1,7 @@
 const bootstrapFilters = async function(
   requestQuery,
   mongooseModel,
+  populate,
   defaultFieldToSortBy = "-createdAt"
 ) {
   const reqQuery = { ...requestQuery };
@@ -34,12 +35,17 @@ const bootstrapFilters = async function(
 
   const totalOfDocuments = await mongooseModel.countDocuments();
 
-  const query = mongooseModel
+  let query = mongooseModel
     .find(JSON.parse(queryStr))
     .select(fieldsToSelectInDocument)
     .sort(sortDocumentsByFields)
     .skip(startIndex)
-    .limit(limit);
+    .limit(limit)
+    .populate(populate);
+
+  // if (populate) {
+  //   query = query.populate(populate);
+  // }
 
   const pagination = {
     next: endIndex < totalOfDocuments ? page + 1 : -1,
@@ -49,8 +55,7 @@ const bootstrapFilters = async function(
 
   return {
     query,
-    pagination,
-    totalOfDocuments
+    pagination
   };
 };
 
