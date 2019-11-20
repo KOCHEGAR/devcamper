@@ -14,6 +14,7 @@ dotenv.config({ path: `${process.cwd()}/config/config.env` });
 // Route files
 const bootcampRoutes = require(`../src/routes/bootcamps`);
 const courseRoutes = require(`../src/routes/courses`);
+const authRoutes = require("../src/routes/auth");
 
 connectDB();
 
@@ -34,6 +35,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // url mappings
 app.use("/api/v1/bootcamps", bootcampRoutes);
 app.use("/api/v1/courses", courseRoutes);
+app.use("/api/v1/auth", authRoutes);
 
 // error handler
 app.use(errorHandler);
