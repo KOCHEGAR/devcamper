@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
 const geocoder = require("../utils/geocoder");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const BootcampSchema = new mongoose.Schema(
   {
@@ -108,6 +109,7 @@ const BootcampSchema = new mongoose.Schema(
     toJSON: { virtuals: true }
   }
 );
+BootcampSchema.plugin(uniqueValidator);
 
 // mongoose hook to  Create bootcamp slug from name
 BootcampSchema.pre("save", function(next) {

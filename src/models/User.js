@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const uniqueValidator = require("mongoose-unique-validator");
 
 const UserSchema = mongoose.Schema({
   name: {
@@ -34,19 +35,22 @@ const UserSchema = mongoose.Schema({
     default: Date.now
   }
 });
+UserSchema.plugin(uniqueValidator);
 
 // Encrypt password
-// UserSchema.pre("save", async function(next) {
-//   const salt = await bcryptjs.genSalt(13);
-//   this.password = await bcryptjs.hash(this.password, salt);
-//   console.log(next);
-//   next();
-// });
+UserSchema.pre("save", async function(next) {
+  const salt = await bcryptjs.genSalt(13);
+  this.password = await bcryptjs.hash(this.password, salt);
+});
 
 // Sign JWT and return
-// UserSchema.methods.getSignedJWT = function() {
-//   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-//     expiresIn: process.env.JWT_EXPIRE
-//   });
-// };
+UserSchema.methods.getSignedJWT = function() {
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE
+  });
+};
+
+UserSchema.methods.matchPassword = async function(password) {
+  return await bcryptjs.compare(password, this.password);
+};
 module.exports = mongoose.model("User", UserSchema);
