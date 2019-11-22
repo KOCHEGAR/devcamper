@@ -44,6 +44,16 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendTokenResponse(user, 200, res);
 });
 
+// @desc        get currently logged user
+// @route       POST /api/v1/auth/me
+// @access      Private
+exports.getMe = asyncHandler(async (req, res, next) => {
+  res.status(200).json({
+    success: true,
+    user: req.user
+  });
+});
+
 // Helper func
 const sendTokenResponse = (user, code, res) => {
   res.status(code).json({

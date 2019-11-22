@@ -42,7 +42,8 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
   // console.log("Files ", req.files);
   const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
-    runValidators: true
+    runValidators: true,
+    context: "query"
   });
 
   if (!bootcamp) {
