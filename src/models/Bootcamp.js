@@ -102,6 +102,11 @@ const BootcampSchema = new mongoose.Schema(
     createdAt: {
       type: Date,
       default: Date.now
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true
     }
   },
   {
@@ -149,5 +154,10 @@ BootcampSchema.virtual("courses", {
   foreignField: "bootcamp",
   justOne: false
 });
+
+BootcampSchema.methods.checkOwnership = function(userId) {
+  return this.user.toString() === userId;
+  // return false;
+};
 
 module.exports = mongoose.model("Bootcamp", BootcampSchema);
