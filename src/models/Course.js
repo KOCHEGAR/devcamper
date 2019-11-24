@@ -35,8 +35,18 @@ const CourseSchema = new mongoose.Schema({
     type: mongoose.Schema.ObjectId,
     ref: "Bootcamp",
     required: true
+  },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: true
   }
 });
+
+CourseSchema.methods.checkOwnership = function(userId) {
+  return this.user.toString() === userId;
+  // return false;
+};
 
 // static method to get avg of course tuition
 CourseSchema.statics.getAverageCost = async function(bootcampId) {

@@ -134,7 +134,7 @@ exports.bootcampUploadPhoto = asyncHandler(async (req, res, next) => {
     );
   }
 
-  console.log(files);
+  // console.log(files);
 
   if (!(files && files.file && files.file.mimetype.startsWith("image/"))) {
     return next(new ErrorResponse("Please, upload an image file", 400));
@@ -161,7 +161,7 @@ exports.bootcampUploadPhoto = asyncHandler(async (req, res, next) => {
       );
     }
 
-    await Bootcamp.findByIdAndUpdate(id, { photo: file.name });
+    Bootcamp.findByIdAndUpdate(id, { photo: file.name });
 
     res.status(200).json({
       success: true,
